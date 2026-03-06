@@ -1,25 +1,26 @@
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-int main() {
-    int A, B, C;
-    cin >> A >> B >> C;
-    int tmp = A;
+int main(void) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-    if (A == B & B == C)
-        cout << 10000+A*1000 << endl;
-    else if (A==B || B==C || A==C) {
-        if (A==B || B==C)
-            cout << 1000 + B*100;
-        else
-            cout << 1000 + C*100;
+    int a, b, c;
+    cin >> a >> b >> c;
+
+    if ( a==b && b==c) {
+        cout << 10000+a*1000;
+    }
+    else if (a==b|| a==c) {
+        cout << 1000+a*100;
+    }
+    else if (b==c) {
+        cout << 1000+b*100;
     }
     else {
-        if (B > tmp ) tmp = B;
-        if (C > tmp ) tmp = C;
-
-        cout << tmp * 100 << endl;
+        cout << max({a,b,c})*100;
     }
 
     return 0;
