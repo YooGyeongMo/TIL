@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 
 using namespace std;
 
@@ -7,15 +6,14 @@ int main(void) {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int arr[3];
+    int a, b, c;
 
-    for (int i = 0 ; i<3; i++) {
-        cin >> arr[i];
-    }
-    sort(arr, arr+3);
+    cin >> a >> b >> c;
 
-    for (int i = 0; i<3; i++) {
-        cout << arr[i] << " ";
-    }
+    if (a>b) swap(a,b);
+    if (a>c) swap(a,c);
+    if (b>c) swap(b,c);
+
+    cout << a << " " << b << " " << c ;
     return 0;
 }
