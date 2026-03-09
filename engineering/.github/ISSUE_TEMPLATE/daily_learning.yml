@@ -1,0 +1,18 @@
+name: Daily Learning
+description: Fill out to define your daily learning goal
+title: "[DayX] "
+labels: ["learning"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: 🎯 학습 목표
+  - type: textarea
+    id: output
+    attributes:
+      label: 📄 생성 예정 문서(doc 경로)
+      placeholder: "docs/2024-08-01-day1.md"
+  - type: textarea
+    id: todo
+    attributes:
+      label: ✅ Task(To Do)
