@@ -7,10 +7,7 @@
 ---
 
 ## Algorithms
-- [`algorithms/C++17/`](./algorithms/C++17/) — C++ 백준 풀이
-- [`algorithms/Swift/`](./algorithms/Swift/) — Swift 프로그래머스 풀이
-- [`algorithms/Python/`](./algorithms/Python/) — Python 백준 풀이
-- [`algorithms/SWEA/`](./algorithms/SWEA/) — SWEA 풀이
+- [`algorithms/`](./algorithms/) — 알고리즘 학습 노트 (풀이 코드는 [Algorithm_Study](https://github.com/YooGyeongMo/Algorithm_Study))
 
 ## Swift
 - [`swift/language/arc-memory/`](./swift/language/arc-memory/) — ARC, 메모리 관리, 순환참조
