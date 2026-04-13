@@ -1,0 +1,101 @@
+name: Sync TIL to Portfolio Site
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "plan/**"
+      - "README.md"
+      - ".gitignore"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout TIL repo
+        uses: actions/checkout@v4
+        with:
+          path: til
+
+      - name: Checkout portfolio site repo
+        uses: actions/checkout@v4
+        with:
+          repository: YooGyeongMo/YooGyeongMo.github.io
+          token: ${{ secrets.PORTFOLIO_SYNC_TOKEN }}
+          path: site
+
+      - name: Generate categories.json from READMEs
+        run: |
+          cd til
+          categories="{"
+          first=true
+
+          for dir in */; do
+            dir_name="${dir%/}"
+            case "$dir_name" in
+              .git|.github|plan|node_modules) continue ;;
+            esac
+
+            readme="$dir_name/README.md"
+            [ ! -f "$readme" ] && continue
+
+            # title: first # heading
+            title=$(grep -m1 '^# ' "$readme" | sed 's/^# //')
+            [ -z "$title" ] && title="$dir_name"
+
+            # description: first non-heading, non-blockquote, non-empty line
+            description=$(grep -v '^#' "$readme" | grep -v '^>' | grep -v '^$' | head -1 | sed 's/"/\\"/g')
+
+            if [ "$first" = true ]; then
+              first=false
+            else
+              categories="$categories,"
+            fi
+            categories="$categories \"$dir_name\": { \"title\": \"$title\", \"description\": \"$description\" }"
+          done
+
+          categories="$categories }"
+          echo "$categories" | python3 -m json.tool > categories.json
+          echo "Generated categories.json:"
+          cat categories.json
+
+      - name: Sync TIL content to site
+        run: |
+          # Clean existing til content in site
+          rm -rf site/content/til/*/
+
+          cd til
+          for dir in */; do
+            dir_name="${dir%/}"
+
+            # Skip non-content directories
+            case "$dir_name" in
+              .git|.github|plan|node_modules) continue ;;
+            esac
+
+            # Create category directory
+            mkdir -p "../site/content/til/$dir_name"
+
+            # Copy md files except README.md
+            find "$dir_name" -maxdepth 1 -name "*.md" ! -name "README.md" -exec cp {} "../site/content/til/$dir_name/" \;
+          done
+
+          # Copy categories.json
+          cp categories.json ../site/content/til/categories.json
+
+      - name: Commit and push to site repo
+        run: |
+          cd site
+          git config user.name "YooGyeongMo"
+          git config user.email "yoogyeongmo@users.noreply.github.com"
+
+          git add content/til/
+          if git diff --cached --quiet; then
+            echo "No changes to sync"
+            exit 0
+          fi
+
+          git commit -m "docs: TIL 콘텐츠 동기화"
+          git push
